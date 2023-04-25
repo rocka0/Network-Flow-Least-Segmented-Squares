@@ -17,7 +17,7 @@ points.sort()
 
 # Plot all the points and their indices
 for i, point in enumerate(points):
-    plt.scatter(point[0], point[1], marker="+")
+    plt.scatter(point[0], point[1], marker=".")
     plt.annotate(str(i), xy=point, xytext=(5, 5), textcoords="offset points")
 
 total_cost = 0
