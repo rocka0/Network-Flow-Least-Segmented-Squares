@@ -147,23 +147,14 @@ int main() {
     vector<ld> dp(n);
 
     /**
-     * @brief The minimum cost of segmented square fit for points 0..0 is 0
+     * @brief The minimum cost of segmented square fit for points 0..0 is segmentCost
      */
-    dp[0] = 0;
-
-    /**
-     *
-     * @brief The minimum cost of segmented square fit for points 0..1
-     *
-     * @details The minimum cost of segmented square fit for points 0..1 is the best fit error for points 0..1 plus the cost of inserting a segment
-     * However, the best fit error for points 0..1 is 0 since there is only one point in the subsegment
-     */
-    dp[1] = segmentCost;
+    dp[0] = segmentCost;
 
     /**
      * @brief Compute the minimum cost for segmented square fit for each point
      */
-    for (int i = 2; i < n; ++i) {
+    for (int i = 1; i < n; ++i) {
         dp[i] = bestFitError[0][i] + segmentCost;
         for (int x = 1; x < i; ++x) {
             dp[i] = min(dp[i], bestFitError[x][i] + segmentCost + dp[x - 1]);
