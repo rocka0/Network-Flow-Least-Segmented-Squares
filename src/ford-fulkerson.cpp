@@ -1,8 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-#define int long long
-
 class Graph {
 
 public:
@@ -91,6 +89,7 @@ void Graph::getPath(int start, int end, vector<int>& path, vector<int>& seen)
 {
     if (seen[start])
         return;
+    cout << start << ' ' << end << endl;
 
     seen[start]=1;
 
@@ -104,7 +103,7 @@ void Graph::getPath(int start, int end, vector<int>& path, vector<int>& seen)
     {
         getPath(p, end, path,seen);
 
-        if (path.size())
+        if (!path.empty())
         {
             path.push_back(start);
             return;
@@ -201,7 +200,7 @@ Graph Flow::buildResidualGraph()
 
 void Flow::augment(vector<int> path, Graph res)
 {
-    int b = LLONG_MAX;
+    int b = INT_MAX;
 
     for (int i=0; i<path.size()-1; i++)
         b = min(b, res.getCapacity(path[i+1],path[i]));
@@ -234,6 +233,13 @@ map<pair<int,int>,int> Flow::fordFulkerson()
     if (path.size()==0)
         return flow;
 
+    int f = 0;
+
+    for (auto x : g.adj[0])
+        f+=flow[{0,x}];
+
+    cout<<f<<"\n";
+
     augment(path,res);
     return fordFulkerson();
 }
@@ -245,8 +251,9 @@ map<pair<int,int>,int> Flow::maxFlow()
 
 vector<int> Flow::stCut()
 {
-    vector<int> seen(g.n,0);
-    g.dfs(s,seen);
+    Graph res = buildResidualGraph();
+    vector<int> seen(res.n,0);
+    res.dfs(s,seen);
     return seen;
 }
 
@@ -342,7 +349,7 @@ vector<pair<int,int>> Bipartite::maximumMatching()
 void runFordFulkerson(string filename)
 {
     Graph g;
-    g.readEdge(filename,true,true,true);
+    g.readEdge(filename,true,false,true);
 
     Flow f(g,0,g.n-1);
     map<pair<int,int>,int> flow = f.maxFlow();
@@ -353,6 +360,26 @@ void runFordFulkerson(string filename)
         c+=flow[{0,p}];
 
     cout<<"The max flow is : "<<c<<"\n";
+
+    vector<int> cut = f.stCut();
+
+    cout<<"ST cut\n";
+
+    for (int i=0; i<cut.size(); i++)
+    {
+        if (cut[i]==1)
+            cout<<i<<" ";
+    }
+
+    cout<<"\n";
+
+    for (int i=0; i<cut.size(); i++)
+    {
+        if (cut[i]==0)
+            cout<<i<<" ";
+    }
+
+    cout<<"\n";
 }
 
 int32_t main(int32_t argc, char** argv)
