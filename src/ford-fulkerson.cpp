@@ -1,19 +1,90 @@
+/**
+ * @file ford-fulkerson.cpp
+ * @brief Implements Ford Fulkerson algorithm, and uses it to find the Bipartite Matching of a graph.
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 
+/**
+ * @brief Graph class
+*/
 class Graph {
 public:
+
+    /**
+     * The number of vertices
+    */
     int n;
-    bool directed = false;
+
+    /**
+     * Default constructor
+    */
     Graph();
+    
+    /**
+     * Parameterized constructor
+     * @param n Number of vertices
+    */
     Graph(int n);
+
+    /**
+     * Ordered map implementation of adjacency list
+    */
     map<int, set<int>> adj;
+
+    /**
+     * Ordered map of pairs storing edge weights
+    */
     map<pair<int, int>, int> cap;
+
+    /**
+     * @brief Function to read edges from a file
+     * @param filename Name of the file
+     * @param directed True if the input graph is directed. False otherwise. 
+     * @param weighted True if the input graph is weighted. False otherwise. 
+     * @param oneBased True if the nodes of the input graph follows one-based indexing. False if it follows zero-based indexing. 
+    
+    */
     void readEdge(string filename, bool directed, bool weighted, bool oneBased);
+    
+    /**
+     * Function to add a directed edge to the graph
+     * @param x source node of edge
+     * @param y destination node of edge
+     * @param c capacity of edge
+    */
     void addDirectedEdge(int x, int y, int c);
+    
+     /**
+     * Function to add a undirected edge to the graph
+     * @param x first node of edge
+     * @param y second node of edge
+     * @param c capacity of edge
+    */
     void addUndirectedEdge(int x, int y, int c);
+
+    /**
+     * @brief Find a simple path from source to destination
+     * @param start source node
+     * @param end destination node
+     * @param path A reference to the currently building path
+     * @param seen A reference to seen vector, storing which nodes have been visited so far.
+    */
     void getPath(int start, int end, vector<int>& path, vector<int>& seen);
+    
+    /**
+     * @brief Run depth first search from input node.
+     * @param node Source node 
+     * @param seen A reference to seen vector, storing which nodes have been visited so far.
+    */
     void dfs(int node, vector<int>& seen);
+    
+    /**
+     * @param x Source node
+     * @param y Desitination node
+     * @return Weight of edge connecting nodes x and y.
+    */
     int getCapacity(int x, int y);
 };
 
@@ -105,21 +176,95 @@ void Graph::dfs(int node, vector<int>& seen) {
     for (auto p : adj[node]) dfs(p, seen);
 }
 
+
+/**
+ * Flow class
+*/
 class Flow {
 private:
-    int s, t;
+
+    /**
+     * The source node of graph
+    */
+    int s;
+
+    /**
+     * Sink node of graph
+    */
+    int t;
+    
+    /**
+     * Graph on which flow is to be computed.
+    */
     Graph g;
+    
+    /**
+     * Ordered map of pairs representing flow at each edge
+    */
     map<pair<int, int>, int> flow;
+    
+    /**
+     * Implements the Ford Fulkerson algorithm to find max flow in the given graph.  
+     * @return The maximum flow in the graph as an ordered map of pairs.
+    */
     map<pair<int, int>, int> fordFulkerson();
+    
+    /**
+     * Builds the residual graph from the original graph and current flows.
+     * @return The residual graph
+    */
     Graph buildResidualGraph();
+    
+    /**
+     * Checks if the edge from x to y is a forward edge in the residual graph or not.
+     * @param x The source node of edge
+     * @param y The destination node of edge
+     * @return True if the edge is a forward edge, False otherwise. 
+    */
     bool isForward(int x, int y);
+    
+    /**
+     * @param x The source node of edge
+     * @param y The destination node of edge
+     * @return The current flow along the edge from x to y  
+    */
     int getFlow(int x, int y);
+    
+    /**
+     * Updates the flow along the edge from x to y with the given value.
+     * @param x The source node of edge
+     * @param y The destination node of edge
+     * @param f The new flow value along the edge from x to y
+    */
     void updateFlow(int x, int y, int f);
+    
+    /**
+     * Updates the flow for all the edges in the augmenting path 
+     * @param path A vector containing the augmenting path (in reverse order of nodes)
+     * @param res The residual graph
+    */
     void augment(vector<int> path, Graph res);
 
 public:
+
+    /**
+     * Parameterized constructor for Flow class
+     * @param g The original graph
+     * @param s The source node 
+     * @param t The sink node
+    */
     Flow(Graph g, int s, int t);
+
+    /**
+     * Function to compute max flow. Internally uses the Ford Fulkerson algorithm for the same.
+     * @return An ordered map of pairs having the maximum flow in the graph.
+    */
     map<pair<int, int>, int> maxFlow();
+    
+    /**
+     * Computes the s-t cut for the given source and sink nodes.
+     * @return A vector containing 1's for all the nodes in the same cut as source s, and 0's for all the nodes in the same cut as sink node t.
+    */
     vector<int> stCut();
 };
 
@@ -212,13 +357,37 @@ vector<int> Flow::stCut() {
     return seen;
 }
 
+
+/**
+ * Bipartite Matching class
+*/
 class Bipartite {
 private:
+    
+    /**
+     * The bipartite graph 
+    */
     Graph g;
 
 public:
+    
+    /**
+     * Parameterized constructor
+     * @param g The bipartite graph for which maximum matching is to be computed.
+    */
     Bipartite(Graph g);
+    
+    /**
+     * Function to check if the given graph is a bipartite graph.
+     * @param col A reference parameter to hold the 2-coloring of the given graph, if it is bipartite.
+     * @return True if the graph is bipartite, False otherwise.
+    */
     bool twoColoring(vector<int>& col);
+    
+    /**
+     * Function to compute the maximum matching of the given bipartite graph.
+     * @return A vector containing all the edges in the maximum matching.
+    */
     vector<pair<int, int>> maximumMatching();
 };
 
