@@ -4,7 +4,6 @@ Segmented Least Squares is a dynamic programming algorithm used to find the best
 
 The algorithm divides the points into segments and then calculates the line of best fit for each segment, such that the sum of squared distances between the line and the points is minimized, while also taking into account the cost of creating new segments. This approach allows for a more accurate and efficient way of fitting data that has multiple trends or patterns.
 
-
 ## Algorithm
 
 Given a set $P$ of $n$ points in the plane, denoted $(x_1, y_1), (x_2, y_2), …, (x_n, y_n)$ with  $x_1 < x_2 < …< x_n$ and a line $L$ defined by the equation $y = ax + b$, the error wrt $P$ is sum of the its squared distances to the points in $P$:
@@ -18,7 +17,6 @@ $$OPT(j) = \min_{1\le i \le j}  e_{i,j} + C + OPT(i-1)$$
 
 > $C$ is the cost of making a single segment.
 
-
 ## Time Complexity
 
 The time complexity of the Segmented Least Squares algorithm depends on the number of data points i.e. $N$ and the number of segments created. In general, the algorithm has a time complexity of $\mathcal{O}(N^3)$ as a consequence of calculating the value of $e_{i,j}$ over all $1 \le i \le j \le n$.
@@ -30,6 +28,7 @@ However, after computing the values of $e_{i,j}$, computing the values of $OPT(j
 Overall, the time complexity of the Segmented Least Squares algorithm makes it well-suited for moderate-sized datasets, but may not be practical for very large datasets or real-time applications.
 
 ## Example
+
 Consider the following points, which trace out a stair pattern,
 
 | #   | x   | y   |
