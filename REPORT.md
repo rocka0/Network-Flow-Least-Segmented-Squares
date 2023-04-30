@@ -23,7 +23,7 @@ The time complexity of the Segmented Least Squares algorithm depends on the numb
 
 However, after computing the values of $e_{i,j}$, computing the values of $OPT(j)$ takes $\mathcal{O}(N^2)$ time using the aforementioned recurrence relation.
 
-![Timing Plot](./plots/plot.png)
+![Timing Plot](images/plot.png)
 
 Overall, the time complexity of the Segmented Least Squares algorithm makes it well-suited for moderate-sized datasets, but may not be practical for very large datasets or real-time applications.
 
@@ -46,7 +46,7 @@ Consider the following points, which trace out a stair pattern,
 | 10  | 27  | 1.5 |
 | 11  | 34  | 1.5 |
  
-![Stairs Data](./plots/stairs.png)
+![Stairs Plot](images/stairs.png)
 
 For different values of segment cost:
 
@@ -60,4 +60,4 @@ For different values of segment cost:
 | 6                 | 0.0007      | 0.2225      |
 | 7                 | 0.0000      | 0.0006      |
 
-![Stairs Data](./sample_tc.png)
+![Stairs Data](images/sample_tc.png)
