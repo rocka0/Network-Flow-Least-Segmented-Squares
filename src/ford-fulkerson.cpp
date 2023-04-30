@@ -73,8 +73,10 @@ void Graph::readEdge(string filename, bool directed, bool weighted, bool oneBase
     }
 }
 
-void Graph::getPath(int start, int end, vector<int>& path, vector<int>& seen) {
-    if (seen[start]) return;
+void Graph::getPath(int start, int end, vector<int>& path, vector<int>& seen)
+{
+    if (seen[start])
+        return;
 
     seen[start] = 1;
 
@@ -195,7 +197,7 @@ map<pair<int, int>, int> Flow::fordFulkerson() {
 
     for (auto x : g.adj[0]) f += flow[{0, x}];
 
-    augment(path, res);
+    augment(path,res);
     return fordFulkerson();
 }
 
@@ -213,33 +215,50 @@ vector<int> Flow::stCut() {
 class Bipartite {
 private:
     Graph g;
-    vector<int> partition;
 
 public:
+    Bipartite(Graph g);
     bool twoColoring(vector<int>& col);
     vector<pair<int, int>> maximumMatching();
 };
 
+Bipartite::Bipartite(Graph g)
+{
+    this->g = g;
+}
+
 bool Bipartite::twoColoring(vector<int>& col) {
     col.resize(g.n, -1);
-    col[0] = 0;
 
-    vector<int> v;
-    v.push_back(0);
+    for (int i=0; i<g.n; i++)
+    {
+        if (col[i]!=-1)
+            continue;
 
-    while (v.size()) {
-        int x = v[v.size() - 1];
-        v.pop_back();
-        int c = col[x];
+        vector<int> v;
+        col[i]=0;
+        v.push_back(i);
 
-        for (auto p : g.adj[x]) {
-            int y = p;
+        while (v.size())
+        {
+            int x = v[v.size()-1];
+            v.pop_back();
+            int c = col[x];
 
-            if (col[y] == -1) {
-                col[y] = 1 - col[x];
-                v.push_back(y);
-            } else {
-                if (col[y] == col[x]) return false;
+            for (auto p : g.adj[x])
+            {
+                int y = p;
+
+                if (col[y]==-1)
+                {
+                    col[y] = 1-col[x];
+                    v.push_back(y);
+                }
+                else
+                {
+                    if (col[y]==col[x])
+                        return false;
+                }
             }
         }
     }
@@ -255,14 +274,20 @@ vector<pair<int, int>> Bipartite::maximumMatching() {
         res.push_back({-1, -1});
         return res;
     }
+        
+    int s = g.n;
+    int t = s+1;
 
-    int s = g.n + 1;
-    int t = s + 1;
+    Graph b(g.n+2);
 
-    Graph b(g);
-
-    b.n += 2;
-    vector<pair<int, int>> temp;
+    for (int i=0; i<g.n; i++)
+    {
+        for (auto j : g.adj[i])
+        {
+            if (col[i]==0)
+                b.addDirectedEdge(i,j,g.getCapacity(i,j));
+        }
+    }
 
     for (int i = 0; i < g.n; i++) {
         if (col[i] == 0)
@@ -271,8 +296,15 @@ vector<pair<int, int>> Bipartite::maximumMatching() {
             b.addDirectedEdge(i, t, 1);
     }
 
-    Flow f(b, s, t);
-    map<pair<int, int>, int> flow = f.maxFlow();
+    Flow f(b,s,t);
+    map<pair<int,int>,int> flow = f.maxFlow();
+
+    int tot = 0;
+
+    for (auto x : b.adj[s])
+        tot += flow[{s,x}];
+    
+    cout<<"Max flow : "<<tot<<"\n\n";
 
     for (auto x : flow) {
         if (x.second > 0) {
@@ -284,9 +316,10 @@ vector<pair<int, int>> Bipartite::maximumMatching() {
     return res;
 }
 
-void runFordFulkerson(string filename) {
+void runFordFulkerson(string filename, bool directed, bool weighted, bool oneBased)
+{
     Graph g;
-    g.readEdge(filename, false, true, true);
+    g.readEdge(filename, directed, weighted, oneBased);
 
     Flow f(g, 0, g.n - 1);
     map<pair<int, int>, int> flow = f.maxFlow();
@@ -299,7 +332,7 @@ void runFordFulkerson(string filename) {
 
     vector<int> cut = f.stCut();
 
-    cout << "ST cut\n";
+    cout<<"\nST cut : \n";
 
     for (int i = 0; i < cut.size(); i++) {
         if (cut[i] == 1) cout << i << " ";
@@ -314,6 +347,51 @@ void runFordFulkerson(string filename) {
     cout << "\n";
 }
 
-int main(int argc, char** argv) {
-    runFordFulkerson(argv[1]);
+void runBipartiteMatching(string filename, bool directed, bool weighted, bool oneBased)
+{
+    Graph g;
+    g.readEdge(filename, directed, weighted, oneBased);
+    Bipartite b(g);
+    
+    vector<pair<int,int>> edges = b.maximumMatching();
+
+    pair<int,int> p = {-1,-1};
+    if (edges[0]==p)
+    {
+        cout<<"Not a bipartite graph\n";
+        return;
+    }
+
+    cout<<"The edges of the matching are : \n";
+
+    for (auto p : edges)
+        cout<<p.first<<" "<<p.second<<"\n";
+}
+
+int main(int argc, char** argv)
+{
+    if (argc<2)
+    {
+        cout<<"Enter mode and input file\n";
+        exit(0);
+    }
+ 
+
+    int mode = atoi(argv[1]);
+
+    bool oneBased = true;
+    bool directed,weighted;
+
+    if (mode==1)
+    {
+        directed = true;
+        weighted = true;
+        runFordFulkerson(argv[2],directed,weighted,oneBased);
+    }
+    else
+    {
+        directed = false;
+        weighted = false;
+        runBipartiteMatching(argv[2],directed,weighted,oneBased);
+    }
 }
