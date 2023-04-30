@@ -27,7 +27,7 @@ This was a bigger test case with $n = 100$, $m = 1000$ and $C = 10,000$.
 
 The original test case can be found here: https://onlinejudge.u-aizu.ac.jp/problems/GRL_6_A
 
-The time taken was `` $\mu s$.
+The time taken was `4.69` $s$.
 
 # Bipartite Matching: Sample Runs
 
